@@ -21,14 +21,6 @@ int main(void) {
   int i, j = 0;
   FILE *sudoku_data = fopen("input.txt" , "r");
 
-  /*
-  for (i = 0; i < NUM_OF_BLOCKS; i++) {
-    blocks[i].num = i + 1;
-    for(j = 0; j < NUM_OF_NUMS; j++)
-      blocks[i].numbers[j] = j + 1;
-    printf("HELlO %d \n", blocks[i].numbers[i]);
-  }*/
-
   read_file(blocks, sudoku_data);
 
   print_sudoku(blocks);
