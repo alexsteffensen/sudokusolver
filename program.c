@@ -74,6 +74,13 @@ void read_file(block *blocks, FILE *data) {
     else
       continue;
   }
+  for (i = 0; i < NUM_OF_BLOCKS; i++) {
+    printf("Block %d [", i);
+    for (p = 0; p < NUM_OF_NUMS; p++){
+      printf(" %d ", blocks[i].numbers[p]);
+    }
+    printf("]\n");
+  }
 }
 
 void print_sudoku(block *blocks) {
@@ -130,10 +137,10 @@ int find_number(block *blocks) {
         printf("--------------------LEDER EFTER NÆSTE TAL-----------------------\n");
         for (k = 0; k < NUM_OF_NUMS; k++){
           temp_number_arr[k] = -1;
-          
         }
         arr_pos = 0;
-        printf("Array resetting...\n");  
+        printf("Array resetting...\n");
+        printf("Leder efter et tal til blok %d pos %d\n", i, j);  
         if (check_block(blocks, temp_number_arr, i, j, &arr_pos) || 
             check_horizontal(blocks, temp_number_arr, i, j, &arr_pos) || 
             check_vertical(blocks, temp_number_arr, i, j, &arr_pos)){
@@ -175,7 +182,7 @@ int check_block(block *blocks, int *temp_number_arr, int block_num, int pos_num,
   for (i = 0; i < NUM_OF_NUMS; i++){
     current_number = blocks[block_num].numbers[i];
     
-    if (current_number && check_number(temp_number_arr, arr_pos, current_number)){
+    if (current_number > 0 && current_number < 10 && check_number(temp_number_arr, arr_pos, current_number)){
       temp_number_arr[*arr_pos] = current_number;
       ++(*arr_pos);
       if (*arr_pos == (NUM_OF_NUMS - 1)){
@@ -206,8 +213,9 @@ int check_horizontal(block *blocks, int *temp_number_arr, int block_num, int pos
 
   for (i = 0; i < 3; i++){
     for (j = 0; j < 3; j++){
-      current_number = blocks[block_num + block_calc[i]].numbers[pos_num + pos_calc[j]];
-      if (current_number && check_number(temp_number_arr, arr_pos, current_number)){
+      current_number = blocks[block_calc[i]].numbers[pos_calc[j]];
+      printf("block_calc: %d, pos_cal: %d, tallet: %d \n", block_calc[i], pos_calc[j], current_number);
+      if (current_number > 0 && current_number < 10 && check_number(temp_number_arr, arr_pos, current_number)){
         temp_number_arr[*arr_pos] = current_number;
         ++(*arr_pos);
         if (*arr_pos == (NUM_OF_NUMS - 1)){
@@ -239,13 +247,12 @@ int check_vertical(block *blocks, int *temp_number_arr, int block_num, int pos_n
 
   for (i = 0; i < 3; i++){
     for (j = 0; j < 3; j++){
-      k = 3 * block_calc[i];
-      l = 3 * pos_calc[j];
-      current_number = blocks[block_num + k].numbers[pos_num + l];
-      printf("block_calc: %d, pos_cal: %d \n", k, l);
-      if (current_number && check_number(temp_number_arr, arr_pos, current_number)){
+      k = block_calc[i];
+      l = pos_calc[j];
+      current_number = blocks[k].numbers[l];
+      printf("block_calc: %d, pos_cal: %d, tallet: %d \n", k, l, current_number);
+      if (current_number > 0 && current_number < 10 && check_number(temp_number_arr, arr_pos, current_number)){
         temp_number_arr[*arr_pos] = current_number;
-        printf("current number: %d\n", current_number);
         ++(*arr_pos);
         if (*arr_pos == (NUM_OF_NUMS - 1)){
           print_array(temp_number_arr);
@@ -262,8 +269,6 @@ int check_vertical(block *blocks, int *temp_number_arr, int block_num, int pos_n
 
 }
 
-
-
 int check_number(int *temp_number_arr, int *arr_pos, int number) {
   int i;
 
@@ -279,18 +284,18 @@ int check_number(int *temp_number_arr, int *arr_pos, int number) {
 void find_block_num_hor(int block_num, int *block_calc) {
   switch (block_num % 3) {
   case 0:
-    block_calc[1] = 1;
-    block_calc[2] = 2;
+    block_calc[1] = block_num + 1;
+    block_calc[2] = block_num + 2;
     break;
   
   case 1:
-    block_calc[1] = -1;
-    block_calc[2] = 1;
+    block_calc[1] = block_num - 1;
+    block_calc[2] = block_num + 1;
     break;
 
   case 2:
-    block_calc[1] = -2;
-    block_calc[2] = -1;
+    block_calc[1] = block_num - 2;
+    block_calc[2] = block_num - 1;
     break;
 
   default:  break;
@@ -300,18 +305,18 @@ void find_block_num_hor(int block_num, int *block_calc) {
 void find_block_num_ver(int block_num, int *block_calc) {
   switch (block_num / 3) {
   case 0:
-    block_calc[1] = 1;
-    block_calc[2] = 2;
+    block_calc[1] = block_num + (1*3);
+    block_calc[2] = block_num + (2*3);
     break;
   
   case 1:
-    block_calc[1] = -1;
-    block_calc[2] = 1;
+    block_calc[1] = block_num - (1*3);
+    block_calc[2] = block_num + (1*3);
     break;
 
   case 2:
-    block_calc[1] = -2;
-    block_calc[2] = -1;
+    block_calc[1] = block_num - (2*3);
+    block_calc[2] = block_num - (1*3);
     break;
 
   default:  break;
@@ -321,47 +326,45 @@ void find_block_num_ver(int block_num, int *block_calc) {
 void find_pos_num_hor(int pos_num, int *pos_calc) {
   switch (pos_num % 3) {
   case 0:
-    pos_calc[1] = 1;
-    pos_calc[2] = 2;
+    pos_calc[1] = pos_num + 1;
+    pos_calc[2] = pos_num + 2;
     break;
   
   case 1:
-    pos_calc[1] = -1;
-    pos_calc[2] = 1;
+    pos_calc[1] = pos_num - 1;
+    pos_calc[2] = pos_num + 1;
     break;
 
   case 2:
-    pos_calc[1] = -2;
-    pos_calc[2] = -1;
+    pos_calc[1] = pos_num - 2;
+    pos_calc[2] = pos_num - 1;
     break;
 
   default:  break;
   }
 }
+
 
 void find_pos_num_ver(int pos_num, int *pos_calc) {
   switch (pos_num / 3) {
   case 0:
-    pos_calc[1] = 1;
-    pos_calc[2] = 2;
+    pos_calc[1] = pos_num + (1*3);
+    pos_calc[2] = pos_num + (2*3);
     break;
   
   case 1:
-    pos_calc[1] = -1;
-    pos_calc[2] = 1;
+    pos_calc[1] = pos_num - 3;
+    pos_calc[2] = pos_num + 3;
     break;
 
   case 2:
-    pos_calc[1] = -2;
-    pos_calc[2] = -1;
+    pos_calc[1] = pos_num - (2*3);
+    pos_calc[2] = pos_num - (1*3);
     break;
 
   default:  break;
   }
 }
-
-
-
 
 
 void insert_number(block *blocks, int *temp_number_arr, int block_num, int pos_num, int *arr_pos) {
@@ -370,7 +373,6 @@ void insert_number(block *blocks, int *temp_number_arr, int block_num, int pos_n
   int i;
 
   while (!num_placed){
-    
     for (i = 0; i < *arr_pos; i++){
       
       if (num_being_checked == temp_number_arr[i]){
@@ -378,9 +380,7 @@ void insert_number(block *blocks, int *temp_number_arr, int block_num, int pos_n
       }
       else if (i == *arr_pos-1){
         blocks[block_num].numbers[pos_num] = num_being_checked;
-        printf("Første tal sættes i: %d, og placeres i blok: %d position %d", num_being_checked
-                                                                            , block_num
-                                                                            , pos_num);
+        printf("Første tal sættes i: %d, og placeres i blok: %d position %d", num_being_checked, block_num, pos_num);
         num_placed = 1;
         break;
       }
