@@ -12,7 +12,6 @@ typedef struct block{
   int num;
 }block;
 
-
 void read_file(block *blocks, FILE *data);
 void print_sudoku(block *blocks);
 void solve_sudoku(block *blocks);
@@ -27,6 +26,15 @@ int check_block(block *blocks, int *temp_number_arr, int block_num, int pos_num,
 int check_number(int *temp_number_arr, int *arr_pos, int number);
 void insert_number(block *blocks, int *temp_number_arr, int block_num, int pos_num, int *arr_pos);
 void print_array(int *arr);
+
+int exclusion_method(block *blocks, int *temp_number_arr, int block_num, int pos_num, int *arr_pos);
+void find_numbers(int *temp_number_arr, int *arr_pos, int *search_nums);
+void find_remaining_pos(block *blocks, int block_num, int pos_num, int* remain_pos);
+int check_positions(block *blocks, int block_num, int *remain_pos, int arr_len, int num);
+int check_horizontal_exclusion(block *blocks, int block_num, int remain_pos, int arr_len, int num);
+int check_vertical_exclusion(block *blocks, int block_num, int remain_pos, int arr_len, int num);
+int check_pos_exclusion(block *blocks, int block_num, int pos_num, int num);
+int find_pos_num(block *blocks, int block_num, int pos_num);
 
 int main(void) {
   block blocks[NUM_OF_BLOCKS];
@@ -122,7 +130,7 @@ void solve_sudoku(block *blocks) {
 /* Skal bare finde et nyt nummer der kan skrives i sudokuen*/
 int find_number(block *blocks) {
   int temp_number_arr[NUM_OF_NUMS];
-  int i = 0, j, k;
+  int i = 0, j= 0, k;
   int number_found = 0;
   int arr_pos = 0;
   
@@ -143,21 +151,24 @@ int find_number(block *blocks) {
         printf("Leder efter et tal til blok %d pos %d\n", i, j);  
         if (check_block(blocks, temp_number_arr, i, j, &arr_pos) || 
             check_horizontal(blocks, temp_number_arr, i, j, &arr_pos) || 
-            check_vertical(blocks, temp_number_arr, i, j, &arr_pos)){
+            check_vertical(blocks, temp_number_arr, i, j, &arr_pos)  ||
+            exclusion_method(blocks, temp_number_arr, i, j, &arr_pos)){
           number_found = 1;
           return 1;
         }
          
       }
-      
-      if (j < NUM_OF_NUMS) /* Er alle tal i blokken tjekket? */
-        j++; /* Nej */
+      if (j < NUM_OF_NUMS-1){ /* Er alle tal i blokken tjekket? */
+        j++;  /* Nej */
+      }
       else
         break; /* ja */
     }
     
-    if (i < NUM_OF_BLOCKS) /* Er alle blokkene blevet tjekket? */
+    if (i < NUM_OF_BLOCKS-1){ /* Er alle blokkene blevet tjekket? */
       i++; /* nej */
+      continue;
+    }
     else
       break; /* ja */
   }
@@ -185,6 +196,7 @@ int check_block(block *blocks, int *temp_number_arr, int block_num, int pos_num,
     if (current_number > 0 && current_number < 10 && check_number(temp_number_arr, arr_pos, current_number)){
       temp_number_arr[*arr_pos] = current_number;
       ++(*arr_pos);
+      printf("Arr_pos has been incremented to: %d\n", *arr_pos);
       if (*arr_pos == (NUM_OF_NUMS - 1)){
         print_array(temp_number_arr);
         insert_number(blocks, temp_number_arr, block_num, pos_num, arr_pos);
@@ -218,6 +230,7 @@ int check_horizontal(block *blocks, int *temp_number_arr, int block_num, int pos
       if (current_number > 0 && current_number < 10 && check_number(temp_number_arr, arr_pos, current_number)){
         temp_number_arr[*arr_pos] = current_number;
         ++(*arr_pos);
+        printf("Arr_pos has been incremented to: %d \n", *arr_pos);
         if (*arr_pos == (NUM_OF_NUMS - 1)){
           print_array(temp_number_arr);
           insert_number(blocks, temp_number_arr, block_num, pos_num, arr_pos);
@@ -238,7 +251,7 @@ int check_vertical(block *blocks, int *temp_number_arr, int block_num, int pos_n
   int block_calc[3]; 
   int i, j, k, l;
   int current_number;
-  printf("tjekker veritkalt ");
+  printf("tjekker veritkalt\n");
   pos_calc[0] = pos_num;
   block_calc[0] = block_num;
 
@@ -247,13 +260,12 @@ int check_vertical(block *blocks, int *temp_number_arr, int block_num, int pos_n
 
   for (i = 0; i < 3; i++){
     for (j = 0; j < 3; j++){
-      k = block_calc[i];
-      l = pos_calc[j];
-      current_number = blocks[k].numbers[l];
-      printf("block_calc: %d, pos_cal: %d, tallet: %d \n", k, l, current_number);
+      current_number = blocks[block_calc[i]].numbers[pos_calc[j]];
+      printf("block_calc: %d, pos_cal: %d, tallet: %d \n", block_calc[i], pos_calc[j], current_number);
       if (current_number > 0 && current_number < 10 && check_number(temp_number_arr, arr_pos, current_number)){
         temp_number_arr[*arr_pos] = current_number;
         ++(*arr_pos);
+        printf("Arr_pos has been incremented to: %d\n", *arr_pos);
         if (*arr_pos == (NUM_OF_NUMS - 1)){
           print_array(temp_number_arr);
           insert_number(blocks, temp_number_arr, block_num, pos_num, arr_pos);
@@ -264,6 +276,7 @@ int check_vertical(block *blocks, int *temp_number_arr, int block_num, int pos_n
       }
     }
   }
+  printf("arr_pos: %d \n", *arr_pos);
   print_array(temp_number_arr);
   return 0;
 
@@ -380,7 +393,7 @@ void insert_number(block *blocks, int *temp_number_arr, int block_num, int pos_n
       }
       else if (i == *arr_pos-1){
         blocks[block_num].numbers[pos_num] = num_being_checked;
-        printf("Første tal sættes i: %d, og placeres i blok: %d position %d", num_being_checked, block_num, pos_num);
+        printf("Første tal sættes i: %d, og placeres i blok: %d position %d\n", num_being_checked, block_num, pos_num);
         num_placed = 1;
         break;
       }
@@ -392,9 +405,177 @@ void insert_number(block *blocks, int *temp_number_arr, int block_num, int pos_n
   else
     break;
   }
-
-
-
 }
+
+int exclusion_method(block *blocks, int *temp_number_arr, int block_num, int pos_num, int *arr_pos) {
+  int arr_len = NUM_OF_NUMS - *arr_pos;
+  int search_nums[arr_len];
+  int remain_pos_len = find_pos_num(blocks, block_num, pos_num);
+  int remain_pos[remain_pos_len];
+  int i, j, condition = 0;
+
+
+  printf("**********Udelukkelses metoden starter********** \n");
+
+  find_numbers(temp_number_arr, arr_pos, search_nums);
+  
+  printf("Pos arr len: %d \n", remain_pos_len);
+
+  printf("arr_len %d og arr_pos %d \n", arr_len, *arr_pos);
+
+  printf("Tallene der skal søges igennem er [");
+  for (j = 0; j < arr_len; j++){
+    printf("%d, ", search_nums[j]);
+  }
+  printf("]\n");
+  
+
+  find_remaining_pos(blocks, block_num, pos_num, remain_pos);
+
+  printf("Positionerne der skal søges igennem er [");
+  for (j = 0; j < remain_pos_len; j++){
+    printf("%d, ", remain_pos[j]);
+  }
+  printf("]\n");
+
+  /*looping over the numbers that should be checked for*/
+  for (i = 0; i < arr_len; i++) {
+    printf("!!!!!!!!!KIGGER PÅ NUMMER %d \n", search_nums[i]);
+    if (check_positions(blocks, block_num, remain_pos, remain_pos_len, search_nums[i])){
+      printf("Indsætter tallet: %d ind i blok: %d pos: %d", search_nums[i], block_num, pos_num);
+      blocks[block_num].numbers[pos_num] = search_nums[i];
+      return 1;
+    }
+  }
+  return 0;
+}
+
+int find_pos_num(block *blocks, int block_num, int pos_num) {
+  int i;
+  int arr_len = 0;
+
+  for (i = 0; i < NUM_OF_NUMS; i++){
+    int current_pos_value = blocks[block_num].numbers[i];
+    if (i == pos_num)
+      continue;
+    else if (current_pos_value == 0)
+      arr_len++;
+  }
+  return arr_len;
+}
+
+void find_numbers(int *temp_number_arr, int *arr_pos, int *search_nums){
+  int numbers_found = 0;
+  int check_num = 1;
+  int i, j = 0;
+
+  while (!numbers_found) {
+    for (i = 0; i < *arr_pos; i++) {
+      if (temp_number_arr[i] == check_num)
+        break;
+
+      if (i == (*arr_pos - 1)){
+        search_nums[j] = check_num;
+        j++;
+        break;
+      }
+    }
+    if (check_num < NUM_OF_NUMS) 
+      check_num++;
+    else
+      numbers_found = 1;
+  }
+}
+
+/* This function finds the positions which should be checked */
+void find_remaining_pos(block *blocks, int block_num, int pos_num, int* remain_pos) {
+  int pos, j = 0, current_number;
+
+  for (pos = 0; pos < NUM_OF_NUMS; pos++){
+    if (pos == pos_num)
+      continue;
+
+      current_number = blocks[block_num].numbers[pos];
+    
+    if (current_number == 0){
+      printf("Added position %d \n", pos);
+      remain_pos[j] = pos;
+      j++;
+    }
+  }  
+}
+
+/* Skal holde styr på om den position der tjekkes kan få tallet sat ind eller ej */
+int check_positions(block *blocks, int block_num, int *remain_pos, int arr_len, int num) {
+  int i = 0;
+  int number_not_found = 0;
+  
+  for (i = 0; i < arr_len; i++){
+    printf("*********TJekker posisiton %d ********", remain_pos[i]);
+    if (check_horizontal_exclusion(blocks, block_num, remain_pos[i], arr_len, num) || 
+        check_vertical_exclusion(blocks, block_num, remain_pos[i], arr_len, num)) {
+      if (i == arr_len - 1)
+        return 1;
+    }
+    else
+      return 0; 
+  }
+  return 0;
+}
+
+int check_horizontal_exclusion(block *blocks, int block_num, int checking_pos, int arr_len, int num) {
+  int pos_calc[3];
+  int block_calc[3]; 
+   
+  int i, j, k;
+  int current_number;
+  printf("Tjekker horizontalt (udlukkelses)\n");
+
+  pos_calc[0] = checking_pos;
+  block_calc[0] = block_num;
+
+  find_pos_num_hor(checking_pos, pos_calc);
+  find_block_num_hor(block_num, block_calc);
+
+    for (i = 0; i < 3; i++){
+      for (j = 0; j < 3; j++){
+        if (check_pos_exclusion(blocks, block_calc[i], pos_calc[j], num))
+          return 1;
+      }
+    }
+  return 0;
+}
+
+int check_vertical_exclusion(block *blocks, int block_num, int checking_pos, int arr_len, int num) {
+  int pos_calc[3];
+  int block_calc[3]; 
+  
+  int i, j, k;
+  int current_number;
+  printf("Tjekker vertikalt (udlukkelses)\n");
+
+  pos_calc[0] = checking_pos;
+  block_calc[0] = block_num;
+
+  find_pos_num_ver(checking_pos, pos_calc);
+  find_block_num_ver(block_num, block_calc);
+
+  for (i = 0; i < 3; i++){
+    for (j = 0; j < 3; j++){
+      if (check_pos_exclusion(blocks, block_calc[i], pos_calc[j], num))
+        return 1;
+    }
+  }
+  return 0;
+}
+
+int check_pos_exclusion(block *blocks, int block_num, int pos_num, int num) {
+  int current_number = blocks[block_num].numbers[pos_num];
+  printf("block_calc: %d, pos_cal: %d, tallet: %d \n", block_num, pos_num, current_number);
+  if (current_number == num)
+    return 1;
+  return 0;
+}
+
 
 
