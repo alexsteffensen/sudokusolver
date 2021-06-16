@@ -1,10 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
+#include <string.h>
 
 #define NUM_OF_BLOCKS 9
 #define NUM_OF_NUMS 9
 #define MAX_LINE_LEN 100
 #define NUM_OF_BLOCKROWS 3
+#define PATH_MAX 5000
 
 typedef struct block{
   int numbers[NUM_OF_NUMS];
@@ -37,11 +40,23 @@ int main(void) {
 
   printf("Hello team");
 
-  FILE *sudoku_data = fopen("input.txt" , "r");
+  char cwd[PATH_MAX];
+
+  char *input_file = "/input.txt";
+
+  char *pwd = getcwd(cwd, sizeof(cwd));
+  char *cmake_dir = "/cmake-build-debug";
+  char *condition = strstr(pwd, cmake_dir);
+
+  if (condition != NULL)
+    *condition = '\0';
+
+  char *input_dir = strcat(pwd, input_file);
+
+  FILE *sudoku_data = fopen(input_dir , "r");
 
   if (sudoku_data == NULL) {
-    perror("Failed: ");
-    exit(1);
+    printf("Failed");
   }
 
   read_file(blocks, sudoku_data);
