@@ -2,7 +2,6 @@
 #include <unistd.h>
 #include <string.h>
 #include "debug.h"
-#include "exclusion.h"
 #include "sudoku.h"
 #include "solve.h"
 #include "interpreter.h"
