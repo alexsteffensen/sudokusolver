@@ -7,35 +7,14 @@ int exclusion_method(block *blocks, int *temp_number_arr, int block_num, int pos
   int remain_pos[remain_pos_len];
   int i, j;
 
-
-  printf("**********Udelukkelses metoden starter********** \n");
-
   find_numbers(temp_number_arr, arr_pos, search_nums);
-
-  printf("Pos arr len: %d \n", remain_pos_len);
-
-  printf("arr_len %d og arr_pos %d \n", arr_len, *arr_pos);
-
-  printf("Tallene der skal søges igennem er [");
-  for (j = 0; j < arr_len; j++){
-    printf("%d, ", search_nums[j]);
-  }
-  printf("]\n");
 
 
   find_remaining_pos(blocks, block_num, pos_num, remain_pos);
 
-  printf("Positionerne der skal søges igennem er [");
-  for (j = 0; j < remain_pos_len; j++){
-    printf("%d, ", remain_pos[j]);
-  }
-  printf("]\n");
-
   /*looping over the numbers that should be checked for*/
   for (i = 0; i < arr_len; i++) {
-    printf("!!!!!!!!!KIGGER PÅ NUMMER %d \n", search_nums[i]);
     if (check_positions(blocks, block_num, remain_pos, remain_pos_len, search_nums[i])){
-      printf("Indsætter tallet: %d ind i blok: %d pos: %d", search_nums[i], block_num, pos_num);
       blocks[block_num].numbers[pos_num] = search_nums[i];
       return 1;
     }
@@ -91,7 +70,6 @@ void find_remaining_pos(block *blocks, int block_num, int pos_num, int* remain_p
     current_number = blocks[block_num].numbers[pos];
 
     if (current_number == 0){
-      printf("Added position %d \n", pos);
       remain_pos[j] = pos;
       j++;
     }
@@ -103,7 +81,6 @@ int check_positions(block *blocks, int block_num, int *remain_pos, int arr_len, 
   int i;
 
   for (i = 0; i < arr_len; i++){
-    printf("*********TJekker posisiton %d ********", remain_pos[i]);
     if (check_horizontal_exclusion(blocks, block_num, remain_pos[i], arr_len, num) ||
         check_vertical_exclusion(blocks, block_num, remain_pos[i], arr_len, num)) {
       if (i == arr_len - 1)
@@ -119,8 +96,6 @@ int check_horizontal_exclusion(block *blocks, int block_num, int checking_pos, i
   int pos_calc[3];
   int block_calc[3];
   int i, j;
-
-  printf("Tjekker horizontalt (udlukkelses)\n");
 
   pos_calc[0] = checking_pos;
   block_calc[0] = block_num;
@@ -142,8 +117,6 @@ int check_vertical_exclusion(block *blocks, int block_num, int checking_pos, int
   int block_calc[3];
   int i, j;
 
-  printf("Tjekker vertikalt (udlukkelses)\n");
-
   pos_calc[0] = checking_pos;
   block_calc[0] = block_num;
 
@@ -161,7 +134,7 @@ int check_vertical_exclusion(block *blocks, int block_num, int checking_pos, int
 
 int check_pos_exclusion(block *blocks, int block_num, int pos_num, int num) {
   int current_number = blocks[block_num].numbers[pos_num];
-  printf("block_calc: %d, pos_cal: %d, tallet: %d \n", block_num, pos_num, current_number);
+
   if (current_number == num)
     return 1;
   return 0;
