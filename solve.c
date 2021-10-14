@@ -1,4 +1,3 @@
-
 #include "solve.h"
 
 /* Skal løse sudokuen */
@@ -69,7 +68,6 @@ int check_block(block *blocks, int *temp_number_arr, int block_num, int pos_num,
       temp_number_arr[*arr_pos] = current_number;
       ++(*arr_pos);
       if (*arr_pos == (NUM_OF_NUMS - 1)){
-        print_array(temp_number_arr);
         insert_number(blocks, temp_number_arr, block_num, pos_num, arr_pos);
         return 1;
       }
@@ -77,7 +75,6 @@ int check_block(block *blocks, int *temp_number_arr, int block_num, int pos_num,
         continue;
     }
   }
-  print_array(temp_number_arr);
   return 0;
 }
 
@@ -102,7 +99,6 @@ int check_horizontal(block *blocks, int *temp_number_arr, int block_num, int pos
         ++(*arr_pos);
 
         if (*arr_pos == (NUM_OF_NUMS - 1)){
-          print_array(temp_number_arr);
           insert_number(blocks, temp_number_arr, block_num, pos_num, arr_pos);
           return 1;
         }
@@ -111,7 +107,6 @@ int check_horizontal(block *blocks, int *temp_number_arr, int block_num, int pos
       }
     }
   }
-  print_array(temp_number_arr);
   return 0;
 }
 
@@ -137,7 +132,6 @@ int check_vertical(block *blocks, int *temp_number_arr, int block_num, int pos_n
         ++(*arr_pos);
 
         if (*arr_pos == (NUM_OF_NUMS - 1)){
-          print_array(temp_number_arr);
           insert_number(blocks, temp_number_arr, block_num, pos_num, arr_pos);
           return 1;
         }
@@ -147,7 +141,6 @@ int check_vertical(block *blocks, int *temp_number_arr, int block_num, int pos_n
     }
   }
 
-  print_array(temp_number_arr);
   return 0;
 }
 
