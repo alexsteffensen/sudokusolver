@@ -2,12 +2,12 @@
 #include <unistd.h>
 #include <string.h>
 #include "debug.h"
-#include "exclusion.h"
 #include "sudoku.h"
 #include "solve.h"
 #include "interpreter.h"
 
 #define PATH_MAX 5000
+
 
 int main(void) {
   block blocks[NUM_OF_BLOCKS];
@@ -42,9 +42,3 @@ int main(void) {
 
   return EXIT_SUCCESS;
 }
-
-
-
-
-
-

@@ -1,6 +1,5 @@
 #include "interpreter.h"
 
-
 /* reads the input file with unsolved sudoku */
 void read_file(block *blocks, FILE *data) {
   char line[MAX_LINE_LEN], first_char;
@@ -28,13 +27,6 @@ void read_file(block *blocks, FILE *data) {
     }
     else
       continue;
-  }
-  for (i = 0; i < NUM_OF_BLOCKS; i++) {
-    printf("Block %d [", i);
-    for (p = 0; p < NUM_OF_NUMS; p++){
-      printf(" %d ", blocks[i].numbers[p]);
-    }
-    printf("]\n");
   }
 }
 
