@@ -1,5 +1,6 @@
 #include "debug.h"
 
+/* prints the sudoku */
 void print_sudoku(block *blocks) {
   int i, p, j, k, number;
 
@@ -24,6 +25,7 @@ void print_sudoku(block *blocks) {
   }
 }
 
+/* prints an array (used for debugging) */
 void print_array(int *arr) {
   int i;
 

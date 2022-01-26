@@ -1,6 +1,6 @@
 #include "solve.h"
 
-/* Skal løse sudokuen */
+/* Should solve the sudoku */
 void solve_sudoku(block *blocks) {
   int number_found;
 
@@ -11,7 +11,7 @@ void solve_sudoku(block *blocks) {
 
 }
 
-/* Skal bare finde et nyt nummer der kan skrives i sudokuen*/
+/* Should find the next number to put in the sudoku */
 int find_number(block *blocks) {
   int temp_number_arr[NUM_OF_NUMS];
   int i = 0, j, k;
@@ -144,6 +144,7 @@ int check_vertical(block *blocks, int *temp_number_arr, int block_num, int pos_n
   return 0;
 }
 
+/* checks if the number is in the temporary array */
 int check_number(int *temp_number_arr, int *arr_pos, int number) {
   int i;
 
@@ -154,8 +155,7 @@ int check_number(int *temp_number_arr, int *arr_pos, int number) {
   return 1;
 }
 
-
-
+/* inserts the number in the sudoku */
 void insert_number(block *blocks, int *temp_number_arr, int block_num, int pos_num, int *arr_pos) {
   int num_being_checked = 1;
   int num_placed = 0;
@@ -164,10 +164,10 @@ void insert_number(block *blocks, int *temp_number_arr, int block_num, int pos_n
   while (!num_placed){
     for (i = 0; i < *arr_pos; i++){
 
-      if (num_being_checked == temp_number_arr[i]){
+      if (num_being_checked == temp_number_arr[i]){ /* If the number is already taken */
         break;
       }
-      else if (i == *arr_pos-1){
+      else if (i == *arr_pos-1){ /* If the end of the array has been reached */
         blocks[block_num].numbers[pos_num] = num_being_checked;
 
         num_placed = 1;

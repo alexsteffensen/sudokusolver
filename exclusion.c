@@ -1,15 +1,14 @@
 #include "exclusion.h"
 
+/* Uses the exclusion method on the position given. */
 int exclusion_method(block *blocks, int *temp_number_arr, int block_num, int pos_num, int *arr_pos) {
   int arr_len = NUM_OF_NUMS - *arr_pos;
   int search_nums[arr_len];
   int remain_pos_len = find_pos_num(blocks, block_num, pos_num);
   int remain_pos[remain_pos_len];
-  int i, j;
+  int i;
 
   find_numbers(temp_number_arr, arr_pos, search_nums);
-
-
   find_remaining_pos(blocks, block_num, pos_num, remain_pos);
 
   /*looping over the numbers that should be checked for*/
@@ -22,12 +21,14 @@ int exclusion_method(block *blocks, int *temp_number_arr, int block_num, int pos
   return 0;
 }
 
+/* finds how many numbers that needs to be checked for in the exclusion method */
 int find_pos_num(block *blocks, int block_num, int pos_num) {
   int i;
   int arr_len = 0;
+  int current_pos_value;
 
   for (i = 0; i < NUM_OF_NUMS; i++){
-    int current_pos_value = blocks[block_num].numbers[i];
+    current_pos_value = blocks[block_num].numbers[i];
     if (i == pos_num)
       continue;
     else if (current_pos_value == 0)
@@ -36,6 +37,7 @@ int find_pos_num(block *blocks, int block_num, int pos_num) {
   return arr_len;
 }
 
+/* finds the numbers that needs to be checked for in the exclusion method */
 void find_numbers(int *temp_number_arr, int *arr_pos, int *search_nums){
   int numbers_found = 0;
   int check_num = 1;
@@ -76,6 +78,7 @@ void find_remaining_pos(block *blocks, int block_num, int pos_num, int* remain_p
   }
 }
 
+
 /* Skal holde styr på om den position der tjekkes kan få tallet sat ind eller ej */
 int check_positions(block *blocks, int block_num, int *remain_pos, int arr_len, int num) {
   int i;
@@ -92,6 +95,7 @@ int check_positions(block *blocks, int block_num, int *remain_pos, int arr_len, 
   return 0;
 }
 
+/* checks the horizontal positions of a field for a specific num */
 int check_horizontal_exclusion(block *blocks, int block_num, int checking_pos, int arr_len, int num) {
   int pos_calc[3];
   int block_calc[3];
@@ -112,6 +116,7 @@ int check_horizontal_exclusion(block *blocks, int block_num, int checking_pos, i
   return 0;
 }
 
+/* checks the vertical positions of a field for a specific num */
 int check_vertical_exclusion(block *blocks, int block_num, int checking_pos, int arr_len, int num) {
   int pos_calc[3];
   int block_calc[3];
@@ -132,6 +137,7 @@ int check_vertical_exclusion(block *blocks, int block_num, int checking_pos, int
   return 0;
 }
 
+/* checks if a position has that number */
 int check_pos_exclusion(block *blocks, int block_num, int pos_num, int num) {
   int current_number = blocks[block_num].numbers[pos_num];
 
@@ -140,6 +146,7 @@ int check_pos_exclusion(block *blocks, int block_num, int pos_num, int num) {
   return 0;
 }
 
+/* Finds the horizontal block and position numbers that are needed to check the positions in exclusion method */
 void find_num_hor(int *hor_nums) {
   switch (hor_nums[0] % 3) {
     case 0:
@@ -161,7 +168,7 @@ void find_num_hor(int *hor_nums) {
   }
 }
 
-
+/* Finds the vertical block and position numbers that are needed to check the positions in exclusion method */
 void find_num_ver(int *ver_nums) {
   switch (ver_nums[0] / 3) {
     case 0:

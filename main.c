@@ -25,19 +25,19 @@ int main(void) {
   FILE *sudoku_data = fopen(input_dir , "r");
 
   if (sudoku_data == NULL) {
-    printf("Failed");
+    printf("Failed to load input file. \n");
     exit(0);
   }
 
   read_file(blocks, sudoku_data);
   fclose(sudoku_data);
 
-  printf("SUDOKU BEFORE SOLVING \n");
+  printf("The sudoku before solving \n");
   print_sudoku(blocks);
 
   solve_sudoku(blocks);
 
-  printf("SUDOKU AFTER SOLVING \n");
+  printf("The sudoku after solving it \n");
   print_sudoku(blocks);
 
   return EXIT_SUCCESS;

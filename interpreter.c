@@ -1,6 +1,6 @@
 #include "interpreter.h"
 
-/* reads the input file with unsolved sudoku */
+/* reads the input file with unsolved sudoku and puts it into "blocks" variable */
 void read_file(block *blocks, FILE *data) {
   char line[MAX_LINE_LEN], first_char;
   int i = -1, p = 0, sudoku_read = 0;
